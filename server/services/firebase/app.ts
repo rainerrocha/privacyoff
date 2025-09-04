@@ -8,8 +8,8 @@ const getApp = () => {
 
   return initializeApp({
     credential: serviceAccount ? cert(serviceAccount) : applicationDefault(),
-    storageBucket: 'gs://cdn.privacyoff.com'
+    storageBucket: 'gs://privacy-off.firebasestorage.app'
   })
 }
 
-export const app = () => getApp()
+export const app = getApp()

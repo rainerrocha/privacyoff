@@ -26,8 +26,3 @@ env:
     secret: AES_SECRET
     availability:
       - RUNTIME
-
-  - variable: FSA_BASE64
-    secret: FSA_BASE64
-    availability:
-      - RUNTIME
