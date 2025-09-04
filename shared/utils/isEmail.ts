@@ -1,5 +1,5 @@
 import { toLower } from 'lodash-es'
-import * as validator from 'validator'
+import validator from 'validator'
 
 export const isEmail = (email: string) => {
   try {
