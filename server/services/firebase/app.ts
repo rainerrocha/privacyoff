@@ -1,9 +1,15 @@
 import { getEnv } from '~~/server/utils/getEnv'
-import { initializeApp, cert } from 'firebase-admin/app'
+import { initializeApp, cert, applicationDefault } from 'firebase-admin/app'
 
-const serviceAccount = JSON.parse(Buffer.from(getEnv('FSA_BASE64'), 'base64').toString('utf-8'))
+const getApp = () => {
+  const serviceAccount = isDev()
+    ? JSON.parse(Buffer.from(getEnv('FSA_BASE64'), 'base64').toString('utf-8'))
+    : null
 
-export const app = initializeApp({
-  credential: cert(serviceAccount),
-  storageBucket: 'gs://cdn.privacyoff.com'
-})
+  return initializeApp({
+    credential: serviceAccount ? cert(serviceAccount) : applicationDefault(),
+    storageBucket: 'gs://cdn.privacyoff.com'
+  })
+}
+
+export const app = () => getApp()
