@@ -1,9 +1,9 @@
 <template>
-  <section class="mx-auto flex max-w-6xl flex-col gap-6 text-gray-300">
-    <div class="flex gap-2 px-6">
+  <section class="mx-auto flex max-w-4xl flex-col gap-6 px-6 text-gray-300">
+    <div class="flex gap-2" v-if="isLogged">
       <form
         @submit.prevent="onSearch"
-        class="flex w-full items-center gap-2 overflow-hidden rounded-md bg-neutral-900"
+        class="flex h-12 w-full items-center gap-2 overflow-hidden rounded-md bg-neutral-900"
       >
         <button
           type="submit"
@@ -14,97 +14,210 @@
 
         <input
           type="text"
-          class="border-non w-full bg-transparent p-2 text-lg focus:outline-none"
+          class="h-full w-full border-none bg-transparent p-2 text-lg leading-none focus:outline-none"
           v-model="search"
           placeholder="Buscar..."
         />
       </form>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 px-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-      <NuxtLink
-        v-for="item in items"
-        :key="item.id"
-        :to="`/profile/${item.id}`"
-        class="overflow-hidden rounded-lg bg-neutral-800 ring-2 ring-transparent transition-all duration-300 hover:scale-105 hover:ring-red-600"
-      >
-        <div class="relative h-28 w-full overflow-hidden">
-          <Image :src="item.cover" cover />
-        </div>
+    <div
+      class="flex flex-col gap-2 rounded-lg bg-neutral-900 px-6 pb-8 pt-6 text-center text-base"
+      v-else
+    >
+      <h1 class="text-2xl font-bold sm:text-3xl">👋 Bem-vindo!</h1>
 
-        <div class="relative flex items-center p-4">
-          <div
-            class="absolute -top-16 left-0 right-0 mx-auto h-20 w-20 overflow-hidden rounded-full ring-[6px] ring-neutral-800"
-          >
-            <Image :src="item.avatar" cover />
-          </div>
+      <p class="text-center">O seu destino número #1 para conteúdos adultos exclusivos.</p>
 
-          <h2 class="text-base font-medium">{{ item.name }}</h2>
+      <p class="text-center">
+        Mais de <strong class="text-red-600">1.000 modelos</strong> e uma
+        <strong class="text-white">infinidade de fotos e vídeos exclusivos</strong> estão esperando
+        por você.
+      </p>
 
-          <Icon name="FlagBR" class="ml-auto h-5 w-5 rounded-full" />
-        </div>
-      </NuxtLink>
+      <p class="text-center">
+        Não perca tempo — <strong class="text-white">acesso completo imediato</strong> a tudo que só
+        os adultos mais curiosos podem ver.
+      </p>
+
+      <div class="mx-auto mt-4 flex flex-col gap-2 sm:max-w-fit sm:flex-row">
+        <Button class="border-[#BE2A2A] bg-[#EA6060] text-white" @click="openModal('login')">
+          Fazer login
+        </Button>
+
+        <Button class="bg-transparent text-white" @click="openModal('register')">
+          Criar uma conta agora
+        </Button>
+      </div>
     </div>
 
-    <div class="mb-12 w-full px-6">
-      <div v-if="hasMore" class="flex w-full items-center justify-center">
-        <button
-          type="button"
-          class="mx-auto h-12 w-full rounded-md bg-transparent px-8 text-lg text-neutral-500 duration-300 hover:bg-red-500 hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:bg-transparent disabled:text-neutral-500 disabled:opacity-50 md:w-fit"
-          :class="{ 'animate-pulse': isLoading }"
-          :disabled="isLoading"
-          @click="loadMore"
+    <template v-if="isLogged">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
+        <NuxtLink
+          v-for="item in models"
+          :key="item.id"
+          :to="`/model/${item.id}`"
+          class="group relative flex flex-col items-center justify-center overflow-hidden rounded-lg bg-neutral-800 ring-2 ring-transparent transition-all duration-300 hover:scale-105 hover:ring-red-600"
         >
-          {{ isLoading ? 'Carregando...' : 'Carregar mais perfis' }}
-        </button>
+          <Image :src="item.cover" class="relative h-28 w-full overflow-hidden opacity-30" cover />
+
+          <Image
+            :src="item.avatar"
+            class="top-4 h-20 w-20 overflow-hidden rounded-full ring-2 ring-neutral-800"
+            cover
+            absolute
+          />
+
+          <div class="relative flex w-full items-center p-4">
+            <h2 class="overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium">
+              {{ item.name }}
+            </h2>
+
+            <Icon name="FlagBR" class="mx-2 h-5 w-5 rounded-full" />
+
+            <Icon
+              name="ArrowLeft"
+              class="ml-auto h-5 w-5 rotate-180 opacity-20 duration-300 group-hover:opacity-100"
+            />
+          </div>
+        </NuxtLink>
       </div>
 
-      <div v-else class="flex h-12 items-center justify-center">
-        <span class="text-lg text-neutral-600">Não há mais resultados</span>
+      <div class="mb-12 w-full">
+        <div v-if="hasMore" class="flex w-full items-center justify-center">
+          <button
+            type="button"
+            class="relative mx-auto h-12 w-full rounded-md bg-transparent px-8 text-lg text-neutral-500 duration-300 active:scale-95 disabled:cursor-not-allowed disabled:bg-transparent disabled:text-neutral-500 disabled:opacity-50 md:w-fit"
+            :class="[isLoading ? '' : 'hover:bg-red-500 hover:text-white']"
+            :disabled="isLoading"
+            @click="loadMore"
+          >
+            <Loader :active="isLoading" />
+
+            <span class="flex items-center justify-center" v-if="!isLoading">
+              Carregar mais perfis
+            </span>
+          </button>
+        </div>
+
+        <div v-else class="flex h-12 items-center justify-center">
+          <span class="text-lg text-neutral-600">Não há mais resultados</span>
+        </div>
       </div>
+    </template>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-3" v-else>
+      <button
+        v-for="item in models"
+        :key="item.id"
+        type="button"
+        class="group relative flex flex-col items-center justify-center overflow-hidden rounded-lg bg-neutral-800 ring-2 ring-transparent transition-all duration-300 hover:scale-105 hover:ring-red-600"
+        @click="openModal('login')"
+      >
+        <Image :src="item.cover" class="relative h-28 w-full overflow-hidden opacity-30" cover />
+
+        <Image
+          :src="item.avatar"
+          class="top-4 h-20 w-20 overflow-hidden rounded-full ring-2 ring-neutral-800"
+          cover
+          absolute
+        />
+
+        <div class="relative flex w-full items-center p-4">
+          <h2 class="overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium">
+            {{ item.name }}
+          </h2>
+
+          <Icon name="FlagBR" class="mx-2 h-5 w-5 rounded-full" />
+
+          <Icon
+            name="ArrowLeft"
+            class="ml-auto h-5 w-5 rotate-180 opacity-20 duration-300 group-hover:opacity-100"
+          />
+        </div>
+      </button>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
 import { isClient, useInfiniteScroll } from '@vueuse/core'
+import { get, isArray, isEmpty, last, map, uniqBy } from 'lodash-es'
 
-const { data } = await useAsyncData('profiles', () => $fetch(`/v1/profiles?page=1`))
+const { isLogged } = useUser()
+const { start: startLoader, isLoading: isAsyncLoading } = useLoader()
 
-const page = ref<number>(2)
-const ready = ref<boolean>(true)
-const items = ref<any>(data.value?.items || [])
+const { data } = await useAsyncData('models', () => {
+  return useApi('/v1/models', { method: 'POST' })
+})
+
+const items = ref<any[]>(data.value?.items || [])
 const search = ref<string>('')
-const hasMore = ref<boolean>(data.value?.hasMore || true)
+const isReady = ref<boolean>(true)
+
+const models = computed(() => {
+  return map(items.value, (item) => ({
+    ...item,
+    cover: useImageBlur(item.cover),
+    avatar: useImageBlur(item.avatar)
+  }))
+})
+
+const lastId = computed(() => get(last(items.value), 'id', ''))
+const hasMore = computed(() => !isEmpty(data.value?.items))
+const isLoading = computed(() => isAsyncLoading.value || isScrollLoading.value)
 
 const onSearch = () => {
-  console.log(search.value)
+  items.value = []
+  loadMore()
 }
 
 async function loadMore() {
+  let loading
+
+  if (isEmpty(items.value)) {
+    loading = startLoader('models')
+  }
+
   try {
-    const data = await $fetch(`/v1/profiles?page=${page.value}`)
+    const response = await useApi('/v1/models', {
+      body: {
+        search: search.value,
+        lastId: lastId.value
+      },
+      method: 'POST'
+    })
 
-    console.log(data)
+    const oldItems = isArray(items.value) ? items.value : []
+    const newItems = isArray(response.items) ? response.items : []
 
-    items.value = [...items.value, ...(data.items || [])]
-    hasMore.value = data.hasMore || false
+    items.value = uniqBy([...oldItems, ...newItems], 'id')
   } catch {
     items.value = []
-    hasMore.value = false
   } finally {
-    page.value++
+    if (loading) loading.stop()
   }
 }
 
-const el = computed(() => (ready.value && isClient ? document : null))
+const el = computed(() => {
+  if (!isClient) return null
+  if (!isReady.value) return null
+  if (!isLogged.value) return null
 
-const { isLoading } = useInfiniteScroll(el, () => loadMore(), {
+  return document
+})
+
+const { isLoading: isScrollLoading } = useInfiniteScroll(el, () => loadMore(), {
   distance: 100,
   canLoadMore: () => hasMore.value
 })
 
+watch(isLogged, () => {
+  items.value = []
+  loadMore()
+})
+
 onUnmounted(() => {
-  ready.value = false
+  isReady.value = false
 })
 </script>
