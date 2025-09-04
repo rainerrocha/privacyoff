@@ -10,13 +10,14 @@
           </NuxtLink>
 
           <div class="ml-auto flex gap-6">
-            <NuxtLink
-              to="/subscription"
+            <button
+              type="button"
+              @click="openModal('subscription')"
               class="flex items-center justify-center gap-2 px-2 text-lg font-medium text-neutral-300 duration-300 hover:text-red-500"
               v-if="isLogged"
             >
-              Assinatura
-            </NuxtLink>
+              Minha conta
+            </button>
 
             <button
               type="button"
