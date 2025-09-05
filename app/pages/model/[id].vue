@@ -201,7 +201,15 @@ if (!model.value.id) {
   throw createError({ statusCode: 404 })
 }
 
+const title = computed(() => `${model.value.name} - Privacy Off`)
+const description = computed(() => `Fotos e vídeos de ${model.value.name}`)
+
 useHead({
-  title: model.value.name
+  title: title.value,
+  meta: [
+    { name: 'description', content: description.value },
+    { property: 'og:title', content: title.value },
+    { property: 'og:description', content: description.value }
+  ]
 })
 </script>

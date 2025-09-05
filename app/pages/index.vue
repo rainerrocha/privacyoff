@@ -229,6 +229,7 @@ onUnmounted(() => {
 
 useHead({
   title: 'Privacy Off - Tudo em um só lugar',
-  titleTemplate: ''
+  titleTemplate: '',
+  meta: [{ property: 'og:title', content: 'Privacy Off - Tudo em um só lugar' }]
 })
 </script>
