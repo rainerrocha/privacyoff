@@ -9,18 +9,7 @@
             to="/"
             class="flex items-center justify-center text-2xl font-bold text-white sm:text-3xl"
           >
-            <div class="relative flex flex-col">
-              <div class="border-b-3 text-red-600" />
-              <div class="absolute top-0 left-0 h-full w-0 border-l-3 text-red-600" />
-              <span class="ml-2 pr-2 leading-none text-red-600">PRIVACY</span>
-              <div class="mt-[4px] border-t-3 text-red-600" />
-            </div>
-
-            <div class="flex flex-col">
-              <div class="border-b-3 border-transparent" />
-              <span class="-ml-2 leading-none text-red-900">OFF</span>
-              <div class="mt-[4px] border-t-3 border-transparent" />
-            </div>
+            <Icon name="Logo" class="h-8 w-auto md:h-10" />
           </NuxtLink>
 
           <div class="ml-auto flex gap-1 sm:gap-6">
