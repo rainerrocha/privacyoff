@@ -26,12 +26,13 @@ export default defineEventHandler(async (event) => {
     return setResponseStatus(event, 304)
   }
 
-  // Setar ETag
-  setHeader(event, 'ETag', etag)
-
   const response = await fetch(url)
   const arrayBuffer = await response.arrayBuffer()
   const buffer = await sharp(arrayBuffer).blur(25).jpeg().toBuffer()
+
+  // Setar ETag e contentType
+  setHeader(event, 'ETag', etag)
+  setHeader(event, 'Content-Type', 'image/jpeg')
 
   return new Uint8Array(buffer)
 })

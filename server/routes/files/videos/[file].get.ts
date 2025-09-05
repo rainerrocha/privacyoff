@@ -3,20 +3,19 @@ import { getReferer } from '~~/server/utils/getReferer'
 import { getSignedUrl } from '~~/server/services/firebase/storage'
 
 export default defineEventHandler(async (event) => {
-  const referer = getReferer(event)
   const { file } = getRouterParams(event)
 
-  if (!referer) {
+  const hasReferer = Boolean(getReferer(event))
+
+  if (!hasReferer) {
     return getError(event, { status: 403, message: 'Forbidden' })
   }
 
-  // const logged = validateSession(event)
+  const isLogged = Boolean(await getLogged(event))
 
-  // if (!logged) {
-  //   console.error({ logged })
-
-  //   return getError(event, { status: 401, message: 'Unauthorized' })
-  // }
+  if (!isLogged) {
+    return getError(event, { status: 401, message: 'Unauthorized' })
+  }
 
   const url = await getSignedUrl(`videos/${file}`)
 
@@ -32,11 +31,13 @@ export default defineEventHandler(async (event) => {
     return setResponseStatus(event, 304)
   }
 
-  // Setar ETag
-  setHeader(event, 'ETag', etag)
-
   const response = await fetch(url)
   const buffer = await response.arrayBuffer()
+  const contentType = response.headers.get('content-type') || 'video/mp4'
+
+  // Setar ETag e contentType
+  setHeader(event, 'ETag', etag)
+  setHeader(event, 'Content-Type', contentType as string)
 
   return new Uint8Array(buffer)
 })

@@ -6,7 +6,7 @@
         class="fixed top-0 left-0 z-40 flex h-dvh w-full items-center-safe justify-center overflow-y-auto duration-300 select-none before:fixed before:h-[200%] before:w-[200%] before:bg-black/70 sm:py-6"
       >
         <OnClickOutside
-          class="scroll-thin max-h-content relative z-10 flex min-h-full w-screen flex-1 flex-col border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:max-h-min sm:min-h-auto sm:rounded-lg sm:shadow-2xl"
+          class="scroll-thin max-h-content relative z-10 flex min-h-full w-dvw flex-1 flex-col border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:max-h-min sm:min-h-auto sm:rounded-lg sm:shadow-2xl"
           :class="additionalClasses"
           @trigger="handleClickOutside"
         >

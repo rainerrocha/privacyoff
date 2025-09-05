@@ -9,7 +9,7 @@
         <Icon name="ArrowLeft" class="h-6 w-6" />
       </button>
 
-      <h1 class="whitespace-nowrap text-xl font-bold duration-300 md:text-2xl">
+      <h1 class="text-xl font-bold whitespace-nowrap duration-300 md:text-2xl">
         {{ model.name }}
       </h1>
 
@@ -158,8 +158,6 @@
 </template>
 
 <script lang="ts" setup>
-import { map } from 'lodash-es'
-
 const { isLogged } = useUser()
 
 const { id } = useRoute().params
@@ -202,10 +200,8 @@ const medias = computed(() => {
 if (!model.value.id) {
   throw createError({ statusCode: 404 })
 }
-</script>
 
-<style lang="css">
-img {
-  user-select: none;
-}
-</style>
+useHead({
+  title: model.value.name
+})
+</script>

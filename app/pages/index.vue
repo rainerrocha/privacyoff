@@ -22,7 +22,7 @@
     </div>
 
     <div
-      class="flex flex-col gap-2 rounded-lg bg-neutral-900 px-6 pb-8 pt-6 text-center text-[15px] sm:text-base"
+      class="flex flex-col gap-2 rounded-lg bg-neutral-900 px-6 pt-6 pb-8 text-center text-[15px] sm:text-base"
       v-else
     >
       <h1 class="text-2xl font-bold sm:text-3xl">👋 Bem-vindo!</h1>
@@ -75,7 +75,7 @@
           />
 
           <div class="relative flex w-full items-center p-4">
-            <h2 class="overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium">
+            <h2 class="overflow-hidden text-base font-medium text-ellipsis whitespace-nowrap">
               {{ item.name }}
             </h2>
 
@@ -130,7 +130,7 @@
         />
 
         <div class="relative flex w-full items-center p-4">
-          <h2 class="overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium">
+          <h2 class="overflow-hidden text-base font-medium text-ellipsis whitespace-nowrap">
             {{ item.name }}
           </h2>
 
@@ -225,5 +225,10 @@ watch(isLogged, () => {
 
 onUnmounted(() => {
   isReady.value = false
+})
+
+useHead({
+  title: 'Privacy Off - Tudo em um só lugar',
+  titleTemplate: ''
 })
 </script>

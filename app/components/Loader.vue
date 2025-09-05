@@ -8,11 +8,8 @@
     leave-to-class="opacity-0"
   >
     <div
-      class="left-0 top-0 z-50 flex items-center justify-center"
-      :class="[
-        fixed ? 'fixed h-dvh w-screen' : 'absolute h-full w-full',
-        background && 'bg-black/80'
-      ]"
+      class="top-0 left-0 z-50 flex items-center justify-center"
+      :class="[fixed ? 'fixed h-dvh w-dvw' : 'absolute h-full w-full', background && 'bg-black/80']"
       v-if="active"
     >
       <svg viewBox="25 25 50 50" :class="size">
