@@ -206,6 +206,7 @@ const description = computed(() => `Fotos e vídeos de ${model.value.name}`)
 
 useHead({
   title: title.value,
+  titleTemplate: '',
   meta: [
     { name: 'description', content: description.value },
     { property: 'og:title', content: title.value },
