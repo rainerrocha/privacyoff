@@ -210,6 +210,7 @@ useHead({
   meta: [
     { name: 'description', content: description.value },
     { property: 'og:title', content: title.value },
+    { property: 'og:image', content: model.value.avatar },
     { property: 'og:description', content: description.value }
   ]
 })

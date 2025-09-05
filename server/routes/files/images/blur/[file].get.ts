@@ -1,16 +1,9 @@
 import { createHash } from 'crypto'
-import { getReferer } from '~~/server/utils/getReferer'
 import { getSignedUrl } from '~~/server/services/firebase/storage'
 import sharp from 'sharp'
 
 export default defineEventHandler(async (event) => {
   const { file } = getRouterParams(event)
-
-  const hasReferer = Boolean(getReferer(event))
-
-  if (!hasReferer) {
-    return getError(event, { status: 403, message: 'Forbidden' })
-  }
 
   const url = await getSignedUrl(`images/${file}`)
 
