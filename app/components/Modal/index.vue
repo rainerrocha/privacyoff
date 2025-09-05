@@ -4,10 +4,9 @@
       <div
         v-if="active"
         class="fixed left-0 top-0 z-40 flex h-screen w-full select-none items-center justify-center bg-black/90 duration-300 before:fixed before:h-[200%] before:w-[200%] before:bg-black before:bg-opacity-20"
-        :class="blinkClass"
       >
         <OnClickOutside
-          class="relative z-10 overflow-hidden rounded-lg border border-neutral-100 bg-neutral-100 shadow-2xl duration-300"
+          class="relative z-10 h-full max-h-screen w-screen overflow-hidden border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:h-auto sm:rounded-lg sm:shadow-2xl"
           :class="additionalClasses"
           @trigger="handleClickOutside"
         >
@@ -60,7 +59,7 @@ const props = withDefaults(
 const active = ref(false)
 const loading = ref(false)
 const blinkClass = ref('')
-const additionalClasses = computed(() => props.class)
+const additionalClasses = computed(() => [props.class, blinkClass.value])
 
 const handleOpen = () => {
   active.value = true

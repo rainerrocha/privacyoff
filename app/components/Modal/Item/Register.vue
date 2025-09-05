@@ -6,10 +6,10 @@
     :disable-outside-click="true"
   >
     <template #content="{ close, submit, loading }">
-      <Form id="login" class="flex h-full flex-col items-center justify-center" @submit="submit">
-        <h1 class="text-[32px] font-medium">Fazer login</h1>
+      <Form id="register" class="flex h-full flex-col items-center justify-center" @submit="submit">
+        <h1 class="text-[32px] font-medium">Criar conta</h1>
 
-        <h2 class="mb-8 mt-2 text-center">Acesse sua conta para desbloquear todo o conteúdo.</h2>
+        <h2 class="mb-8 mt-2 text-center">Crie sua conta para acessar todo o conteúdo.</h2>
 
         <Alert class="w-full" :active="Boolean(errorMessage)" :padding-bottom="24">
           {{ errorMessage }}
@@ -24,7 +24,7 @@
           class="my-2"
           :formatter="formatEmail"
           :validator="[
-            [isRequired, 'Digite seu e-mail'],
+            [isRequired, 'Qual é seu e-mail?'],
             [isEmail, 'Insira um endereço de e-mail válido']
           ]"
           v-model="email"
@@ -39,7 +39,7 @@
           autocomplete="password"
           class="my-2"
           :validator="[
-            [isRequired, 'Digite sua senha'],
+            [isRequired, 'Crie uma senha'],
             [minLength(6), 'A senha deve ter pelo menos 6 caracteres']
           ]"
           v-model="password"
@@ -48,32 +48,24 @@
         <div class="my-3 flex w-full flex-col items-center justify-between gap-3 sm:flex-row">
           <Button
             type="submit"
-            class="h-14 w-full rounded-lg bg-red-500 px-6 text-base font-semibold text-white sm:w-auto"
+            class="h-14 w-full rounded-lg border-red-600 bg-red-500 px-6 text-base font-semibold text-white"
             :disabled="loading"
           >
-            Realizar acesso
+            Criar conta
 
             <Icon name="ArrowLeft" class="h-4 w-4 rotate-180" />
-          </Button>
-
-          <Button
-            type="button"
-            @click="openModal('forgotPassword')"
-            class="border-transparent py-0 font-medium text-neutral-600 hover:underline"
-          >
-            Recuperar senha
           </Button>
         </div>
 
         <div class="mt-auto w-full pt-5 text-center">
-          <p class="font-medium text-neutral-600">Ainda não tem uma conta?</p>
+          <p class="font-medium text-neutral-600">Já tem uma conta?</p>
 
           <Button
             type="button"
-            @click="openModal('register')"
+            @click="openModal('login')"
             class="mx-auto border-transparent font-medium text-neutral-600 hover:underline"
           >
-            Criar conta
+            Fazer login
           </Button>
         </div>
       </Form>
@@ -99,7 +91,7 @@ const onSubmit = async () => {
   try {
     errorMessage.value = ''
 
-    const { error, success } = await useApi('/v1/auth/login', {
+    const { error, success } = await useApi('/v1/auth/register', {
       body: {
         email: email.value,
         password: password.value
@@ -134,18 +126,12 @@ const onSubmit = async () => {
         passwordRef.value.setError('A senha deve ter pelo menos 6 caracteres.')
         break
 
-      case 'INVALID_ACCOUNT':
-        emailRef.value.setError(
-          'Não existe uma conta para o e-mail informado. Verifique e tente novamente.'
-        )
-        break
-
-      case 'INVALID_CREDENTIALS':
-        passwordRef.value.setError('A senha informada é inválida. Verifique e tente novamente.')
+      case 'USER_ALREADY_REGISTERED':
+        emailRef.value.setError('Já existe uma conta para o e-mail informado.')
         break
 
       case 'TOO_MANY_REQUESTS':
-        errorMessage.value = `Muitas tentativas de login realizadas. Aguarde alguns minutos para tentar novamente.`
+        errorMessage.value = `Muitas tentativas de cadastro realizadas. Aguarde alguns minutos para tentar novamente.`
         break
 
       default:
@@ -161,6 +147,6 @@ const onSubmit = async () => {
 
 onMounted(() => {
   const win = window as any
-  win.loginModal = modal.value
+  win.registerModal = modal.value
 })
 </script>

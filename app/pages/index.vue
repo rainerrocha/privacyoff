@@ -1,5 +1,5 @@
 <template>
-  <section class="mx-auto flex max-w-4xl flex-col gap-6 px-6 text-gray-300">
+  <section class="mx-auto flex max-w-4xl flex-col gap-6 px-4 text-gray-300 sm:px-6">
     <div class="flex gap-2" v-if="isLogged">
       <form
         @submit.prevent="onSearch"
@@ -22,7 +22,7 @@
     </div>
 
     <div
-      class="flex flex-col gap-2 rounded-lg bg-neutral-900 px-6 pb-8 pt-6 text-center text-base"
+      class="flex flex-col gap-2 rounded-lg bg-neutral-900 px-6 pb-8 pt-6 text-center text-[15px] sm:text-base"
       v-else
     >
       <h1 class="text-2xl font-bold sm:text-3xl">👋 Bem-vindo!</h1>
@@ -40,12 +40,18 @@
         os adultos mais curiosos podem ver.
       </p>
 
-      <div class="mx-auto mt-4 flex flex-col gap-2 sm:max-w-fit sm:flex-row">
-        <Button class="border-[#BE2A2A] bg-[#EA6060] text-white" @click="openModal('login')">
+      <div class="mx-auto mt-6 flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
+        <Button
+          class="h-12 w-full rounded-lg border-red-600 bg-red-500 px-6 text-base text-white sm:h-14 sm:w-auto sm:font-semibold"
+          @click="openModal('login')"
+        >
           Fazer login
         </Button>
 
-        <Button class="bg-transparent text-white" @click="openModal('register')">
+        <Button
+          class="h-12 w-full rounded-lg border-neutral-600 bg-neutral-500 px-6 text-base text-white sm:h-14 sm:w-auto sm:font-semibold"
+          @click="openModal('register')"
+        >
           Criar uma conta agora
         </Button>
       </div>

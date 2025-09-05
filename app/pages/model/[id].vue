@@ -1,6 +1,6 @@
 <template>
-  <section class="mx-auto flex max-w-4xl flex-col items-center gap-4 text-neutral-300">
-    <div class="mt-2 flex h-12 w-full items-center justify-between whitespace-nowrap px-6">
+  <section class="mx-auto flex max-w-4xl flex-col gap-6 px-4 text-gray-300 sm:px-6">
+    <div class="mt-2 flex h-12 w-full items-center justify-between whitespace-nowrap">
       <button
         type="button"
         @click="navigateTo('/')"
@@ -21,7 +21,7 @@
       </button>
     </div>
 
-    <div class="grid w-full flex-1 grid-cols-1 gap-6 px-6">
+    <div class="grid w-full flex-1 grid-cols-1 gap-6">
       <div class="overflow-hidden rounded-lg bg-neutral-800">
         <div
           class="relative z-10 flex h-52 w-full items-center justify-center duration-300 lg:h-64"
@@ -78,7 +78,7 @@
       </div>
     </div>
 
-    <div class="mb-6 w-full px-6">
+    <div class="mb-6 w-full">
       <div class="flex w-full flex-col overflow-hidden rounded-lg bg-neutral-800">
         <div class="flex w-full items-center justify-center gap-4 px-6 py-4">
           <button
@@ -132,13 +132,7 @@
           class="grid w-full flex-1 grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4"
           v-if="locked"
         >
-          <button
-            type="button"
-            v-for="photo in Array.from({ length: 10 }, (_, i) => i)"
-            :key="photo"
-            :data-src="model.avatar"
-            @click="openModal('login')"
-          >
+          <button type="button" v-for="photo in medias" :key="photo.id" @click="openModal('login')">
             <div
               class="relative flex aspect-square flex-1 items-center justify-center bg-neutral-500"
             >
@@ -147,29 +141,24 @@
           </button>
         </div>
 
-        <lightgallery
-          class="grid w-full flex-1 grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4"
-          :settings="{ speed: 500, download: false, plugins: [lgZoom] }"
-          v-else
-        >
+        <Gallery class="grid w-full flex-1 grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4" v-else>
           <button
             type="button"
-            v-for="photo in Array.from({ length: 10 }, (_, i) => i)"
-            :key="photo"
-            :data-src="model.avatar"
+            v-for="photo in medias"
+            :key="photo.id"
+            :href="photo.url"
+            :data-fancybox="id"
           >
-            <Image :src="model.avatar" class="relative aspect-square flex-1" cover />
+            <Image :src="photo.url" class="relative aspect-square flex-1" cover />
           </button>
-        </lightgallery>
+        </Gallery>
       </div>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import Lightgallery from 'lightgallery/vue'
-import lgZoom from 'lightgallery/plugins/zoom'
-import { replace } from 'lodash-es'
+import { map } from 'lodash-es'
 
 const { isLogged } = useUser()
 
@@ -203,16 +192,19 @@ const model = computed((): Record<string, any> => {
   }
 })
 
+const medias = computed(() => {
+  return Array.from({ length: 10 }, (_, i) => i).map((_, index) => ({
+    id: index,
+    url: model.value.avatar
+  }))
+})
+
 if (!model.value.id) {
   throw createError({ statusCode: 404 })
 }
 </script>
 
 <style lang="css">
-@import 'lightgallery/css/lightgallery.css';
-@import 'lightgallery/css/lg-thumbnail.css';
-@import 'lightgallery/css/lg-zoom.css';
-
 img {
   user-select: none;
 }

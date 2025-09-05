@@ -47,6 +47,7 @@
 
     <Loader :active="isLoading" fixed background />
     <ModalItemLogin />
+    <ModalItemRegister />
     <ModalItemOver18 />
   </div>
 </template>

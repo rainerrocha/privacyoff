@@ -1,13 +1,13 @@
 <template>
   <Modal
     ref="modal"
-    class="w-full max-w-[550px] p-10"
+    class="w-full px-6 pb-6 pt-12 sm:max-w-[550px] sm:px-10 sm:pb-10 sm:pt-10"
     :submit="handleSubmit"
     :disable-outside-click="true"
   >
-    <template #content="{ close, submit }">
+    <template #content="{ submit }">
       <form
-        class="flex flex-col items-center justify-center text-center text-base"
+        class="flex h-full flex-col items-center text-center text-base"
         @submit.prevent="submit"
       >
         <h1 class="text-xl font-semibold">🔥 Este é o ponto sem volta.</h1>
@@ -21,17 +21,19 @@
           Mas só entra quem tem <strong class="text-red-500">18 anos ou mais.</strong>
         </div>
 
-        <div class="mt-4">Quer descobrir o que está por trás?</div>
+        <div class="mb-6 mt-4">Quer descobrir o que está por trás?</div>
 
-        <div class="mt-6 flex w-full justify-end gap-2">
-          <Button width="flex-1" height="h-10" @click="handleClose">Sair</Button>
+        <div class="mt-auto flex w-full justify-end gap-2">
+          <Button
+            class="h-14 flex-1 rounded-lg border-neutral-300 bg-neutral-200 text-base font-semibold text-neutral-600"
+            @click="handleClose"
+          >
+            Sair
+          </Button>
 
           <Button
             type="submit"
-            width="flex-1"
-            height="h-10"
-            color="red"
-            font-weight="font-semibold"
+            class="h-14 flex-1 rounded-lg bg-red-500 text-base font-semibold text-white"
           >
             Continuar
           </Button>

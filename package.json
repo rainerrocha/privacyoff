@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.49.0",
+    "@fancyapps/ui": "^6.0.28",
     "@nuxt/eslint": "1.9.0",
     "@nuxtjs/tailwindcss": "6.14.0",
     "@vueuse/components": "^13.9.0",
@@ -22,7 +23,6 @@
     "eslint": "^9.0.0",
     "firebase-admin": "^13.5.0",
     "http-status-codes": "^2.3.0",
-    "lightgallery": "2.9.0-beta.1",
     "lodash-es": "^4.17.21",
     "mime-types": "^3.0.1",
     "nuxt": "^4.0.3",

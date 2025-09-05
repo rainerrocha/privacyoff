@@ -1,8 +1,14 @@
-export const openModal = (modal: string) => {
+export const openModal = async (modal: string) => {
   try {
     const win = window as any
 
-    win[`${modal}Modal`]?.open()
+    if (win.opendedModal) {
+      win.opendedModal.close()
+      await new Promise((resolve) => setTimeout(resolve, 150))
+    }
+
+    win.opendedModal = win[`${modal}Modal`]
+    win.opendedModal.open()
 
     return true
   } catch {
