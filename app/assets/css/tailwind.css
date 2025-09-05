@@ -32,3 +32,29 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #555; /* cor ao passar mouse */
 }
+
+@layer utilities {
+  /* === Altura normal (fallback 100vh) === */
+  .h-screen-dvh {
+    height: 100vh;
+  }
+  .min-h-screen-dvh {
+    min-height: 100vh;
+  }
+  .max-h-screen-dvh {
+    max-height: 100vh;
+  }
+
+  /* === Navegadores modernos com dvh === */
+  @supports (height: 100dvh) {
+    .h-screen-dvh {
+      height: 100dvh;
+    }
+    .min-h-screen-dvh {
+      min-height: 100dvh;
+    }
+    .max-h-screen-dvh {
+      max-height: 100dvh;
+    }
+  }
+}

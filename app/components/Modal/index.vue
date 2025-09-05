@@ -3,10 +3,10 @@
     <Transition enter-from-class="scale-modal opacity-0" leave-to-class="scale-modal opacity-0">
       <div
         v-if="active"
-        class="fixed left-0 top-0 z-40 flex h-screen w-full select-none items-center justify-center bg-black/90 duration-300 before:fixed before:h-[200%] before:w-[200%] before:bg-black before:bg-opacity-20"
+        class="h-screen-dvh fixed left-0 top-0 z-40 flex w-full select-none items-center justify-center bg-black/90 duration-300 before:fixed before:h-[200%] before:w-[200%] before:bg-black before:bg-opacity-20"
       >
         <OnClickOutside
-          class="relative z-10 h-full max-h-screen w-screen overflow-hidden border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:h-auto sm:rounded-lg sm:shadow-2xl"
+          class="max-h-screen-dvh relative z-10 h-full w-screen overflow-hidden border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:h-auto sm:rounded-lg sm:shadow-2xl"
           :class="additionalClasses"
           @trigger="handleClickOutside"
         >

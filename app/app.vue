@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen select-none bg-black font-sans text-white">
+  <div class="min-h-screen-dvh select-none bg-black font-sans text-white">
     <header class="flex h-16 w-full">
       <div
         class="fixed z-20 flex h-16 w-full items-center justify-between border-b border-neutral-800 bg-black"
