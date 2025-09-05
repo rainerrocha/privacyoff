@@ -1,15 +1,15 @@
 <template>
   <Modal
     ref="modal"
-    class="w-full px-6 pb-6 pt-12 sm:max-w-[550px] sm:px-10 sm:pb-10 sm:pt-10"
+    class="w-full px-6 py-6 sm:max-w-[500px] sm:px-10 sm:pt-10 sm:pb-10"
     :submit="onSubmit"
     :disable-outside-click="true"
   >
-    <template #content="{ close, submit, loading }">
+    <template #content="{ submit, loading }">
       <Form id="register" class="flex h-full flex-col items-center justify-center" @submit="submit">
-        <h1 class="text-[32px] font-medium">Criar conta</h1>
+        <h1 class="text-3xl font-medium">Criar conta</h1>
 
-        <h2 class="mb-8 mt-2 text-center">Crie sua conta para acessar todo o conteúdo.</h2>
+        <h2 class="mt-2 mb-8 text-center">Crie sua conta para acessar todo o conteúdo.</h2>
 
         <Alert class="w-full" :active="Boolean(errorMessage)" :padding-bottom="24">
           {{ errorMessage }}
@@ -56,19 +56,19 @@
             <Icon name="ArrowLeft" class="h-4 w-4 rotate-180" />
           </Button>
         </div>
-
-        <div class="mt-auto w-full pt-5 text-center">
-          <p class="font-medium text-neutral-600">Já tem uma conta?</p>
-
-          <Button
-            type="button"
-            @click="openModal('login')"
-            class="mx-auto border-transparent font-medium text-neutral-600 hover:underline"
-          >
-            Fazer login
-          </Button>
-        </div>
       </Form>
+
+      <div class="mt-auto w-full pt-5 text-center">
+        <p class="font-medium text-neutral-600">Já tem uma conta?</p>
+
+        <Button
+          type="button"
+          @click="openModal('login')"
+          class="mx-auto border-transparent font-medium text-neutral-600 hover:underline"
+        >
+          Fazer login
+        </Button>
+      </div>
     </template>
   </Modal>
 </template>
@@ -107,8 +107,6 @@ const onSubmit = async () => {
       throw error
     }
   } catch (error) {
-    console.error({ error })
-
     switch (error) {
       case 'REQUIRED_EMAIL':
         emailRef.value.setError('Por favor, digite seu endereço de e-mail.')

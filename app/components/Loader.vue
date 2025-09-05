@@ -10,7 +10,7 @@
     <div
       class="left-0 top-0 z-50 flex items-center justify-center"
       :class="[
-        fixed ? 'h-screen-dvh fixed w-screen' : 'absolute h-full w-full',
+        fixed ? 'fixed h-dvh w-screen' : 'absolute h-full w-full',
         background && 'bg-black/80'
       ]"
       v-if="active"

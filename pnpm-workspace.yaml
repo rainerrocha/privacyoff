@@ -1,6 +1,7 @@
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@parcel/watcher'
+  - '@tailwindcss/oxide'
   - bcrypt
   - core-js
   - esbuild

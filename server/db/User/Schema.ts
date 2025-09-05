@@ -9,7 +9,7 @@ export const UserSchema = z.object({
   subscription: z
     .object({
       period: z
-        .enum(['monthly', 'quarterly', 'semiannual', 'yearly', 'lifetime'])
+        .enum(['monthly', 'quarterly', 'semiannual', 'annual', 'lifetime'])
         .default('monthly'),
       expiresAt: z
         .instanceof(Timestamp)

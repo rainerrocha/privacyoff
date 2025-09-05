@@ -40,7 +40,7 @@ export const setSession = (event: H3Event, value?: string) => {
   if (value) {
     setCookie(event, '__session', value, cookieOptions)
   } else {
-    deleteCookie(event, '__session')
+    deleteCookie(event, '__session', cookieOptions)
   }
 
   return value

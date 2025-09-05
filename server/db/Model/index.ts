@@ -4,6 +4,8 @@ import { ModelSchema, type IModel } from './Schema'
 import { Query, Timestamp, QueryDocumentSnapshot } from 'firebase-admin/firestore'
 export { type IModel, ModelSchema } from './Schema'
 
+let RANDOM_CACHE = [] as string[]
+
 export class Model extends FirestoreModel {
   private docId: string = getId()
   private docData: IModel | Partial<IModel> = {}
@@ -100,13 +102,23 @@ export class Model extends FirestoreModel {
     try {
       const db = new Model()
 
-      let query: Query = db.collection.select('id')
-      let snapshot = await query.get()
+      const docs = await (async () => {
+        if (RANDOM_CACHE.length) {
+          return RANDOM_CACHE
+        }
 
-      const ids = map(take(shuffle(snapshot.docs), limit), 'id')
+        const query: Query = db.collection.select('id')
+        const snapshot = await query.get()
 
-      query = select ? db.collection.select(...select) : db.collection
-      snapshot = await query.where('id', 'in', ids).get()
+        RANDOM_CACHE = map(snapshot.docs, 'id')
+
+        return RANDOM_CACHE
+      })()
+
+      const ids = take(shuffle(docs), limit)
+
+      const query = select ? db.collection.select(...select) : db.collection
+      const snapshot = await query.where('id', 'in', ids).get()
 
       if (snapshot.size > 0) {
         return map(snapshot.docs, (doc) => {

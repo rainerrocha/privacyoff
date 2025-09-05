@@ -3,17 +3,17 @@
     <Transition enter-from-class="scale-modal opacity-0" leave-to-class="scale-modal opacity-0">
       <div
         v-if="active"
-        class="h-screen-dvh fixed left-0 top-0 z-40 flex w-full select-none items-center justify-center bg-black/90 duration-300 before:fixed before:h-[200%] before:w-[200%] before:bg-black before:bg-opacity-20"
+        class="fixed top-0 left-0 z-40 flex h-dvh w-full items-center-safe justify-center overflow-y-auto duration-300 select-none before:fixed before:h-[200%] before:w-[200%] before:bg-black/70 sm:py-6"
       >
         <OnClickOutside
-          class="max-h-screen-dvh relative z-10 h-full w-screen overflow-hidden border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:h-auto sm:rounded-lg sm:shadow-2xl"
+          class="scroll-thin max-h-content relative z-10 flex min-h-full w-screen flex-1 flex-col border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:max-h-min sm:min-h-auto sm:rounded-lg sm:shadow-2xl"
           :class="additionalClasses"
           @trigger="handleClickOutside"
         >
           <button
             type="button"
             @click="handleClose"
-            class="absolute right-2 top-3 flex h-10 w-10 items-center justify-center text-neutral-500 duration-300 hover:text-neutral-800 active:scale-95"
+            class="absolute top-3 right-2 flex h-10 w-10 items-center justify-center text-neutral-500 duration-300 hover:text-neutral-800 active:scale-95"
           >
             <Icon name="Close" class="h-5 w-5" />
           </button>
@@ -40,6 +40,7 @@
 <script lang="ts" setup>
 import { delay } from 'lodash-es'
 import { OnClickOutside } from '@vueuse/components'
+import { useElementBounding } from '@vueuse/core'
 
 const props = withDefaults(
   defineProps<{
@@ -63,10 +64,12 @@ const additionalClasses = computed(() => [props.class, blinkClass.value])
 
 const handleOpen = () => {
   active.value = true
+  document.body.style.overflow = 'hidden'
 }
 
 const handleClose = () => {
   active.value = false
+  document.body.style.overflow = 'auto'
 }
 
 const handleSubmit = async () => {
