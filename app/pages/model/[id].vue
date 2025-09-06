@@ -101,11 +101,11 @@
             :class="
               !isLogged
                 ? 'text-neutral-200'
-                : activeTab === 'photos'
+                : activeTab === 'photo'
                   ? ['text-red-600 ring-2 ring-red-600']
                   : ['ring-2 ring-transparent hover:ring-neutral-600']
             "
-            @click="changeTab('photos')"
+            @click="changeTab('photo')"
             :disabled="!isLogged"
           >
             Fotos
@@ -117,11 +117,11 @@
             :class="
               !isLogged
                 ? 'text-neutral-200'
-                : activeTab === 'videos'
+                : activeTab === 'video'
                   ? ['text-red-600 ring-2 ring-red-600']
                   : ['ring-2 ring-transparent hover:ring-neutral-600']
             "
-            @click="changeTab('videos')"
+            @click="changeTab('video')"
             :disabled="!isLogged"
           >
             Vídeos
@@ -163,23 +163,58 @@
             <Image :src="photo.url" class="relative aspect-square flex-1" cover />
           </button>
         </Gallery>
+
+        <div class="my-12 w-full" v-if="!locked">
+          <div v-if="hasMore" class="flex w-full items-center justify-center">
+            <button
+              type="button"
+              class="relative mx-auto h-12 w-full rounded-md bg-transparent px-8 text-lg text-neutral-500 duration-300 active:scale-95 disabled:cursor-not-allowed disabled:bg-transparent disabled:text-neutral-500 disabled:opacity-50 md:w-fit"
+              :class="[isLoading ? '' : 'hover:bg-red-500 hover:text-white']"
+              :disabled="isLoading"
+              @click="loadMore"
+            >
+              <Loader :active="isLoading && medias.length > 0" />
+
+              <span class="flex items-center justify-center" v-if="!isLoading">
+                Carregar mais perfis
+              </span>
+            </button>
+          </div>
+
+          <div v-else class="flex h-12 items-center justify-center">
+            <span class="text-lg text-neutral-600">Não há mais resultados</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { isClient, useInfiniteScroll } from '@vueuse/core'
+import { get, isArray, isEmpty, last, map, uniqBy } from 'lodash-es'
+
 const { isLogged, hasActiveSubscription } = useUser()
 
 const { id } = useRoute().params
-const { data } = await useAsyncData('model', () => useApi(`/v1/model/${id}`))
+const { data: modelData } = await useAsyncData('model', () => useApi(`/v1/model/${id}`))
+
+const { data: mediasData } = await useAsyncData('medias', () => {
+  return useApi(`/v1/model/${id}/medias`, { method: 'POST' })
+})
+
+const { start: startLoader, isLoading: isAsyncLoading } = useLoader()
 
 const liked = ref(false)
+const items = ref<any[]>(mediasData.value?.items || [])
 const locked = computed(() => !isLogged.value || !hasActiveSubscription.value)
-const activeTab = ref<'all' | 'photos' | 'videos'>('all')
+const isReady = ref<boolean>(true)
+const activeTab = ref<'all' | 'photo' | 'video'>('all')
 
-const changeTab = (tab: 'all' | 'photos' | 'videos') => {
+const changeTab = (tab: 'all' | 'photo' | 'video') => {
+  items.value = []
   activeTab.value = tab
+  loadMore()
 }
 
 const toggleLiked = () => {
@@ -188,7 +223,7 @@ const toggleLiked = () => {
 
 const model = computed((): Record<string, any> => {
   try {
-    const value = data.value?.data as Record<string, any>
+    const value = modelData.value?.data as Record<string, any>
     const result = value.id ? value : {}
 
     return {
@@ -202,10 +237,61 @@ const model = computed((): Record<string, any> => {
 })
 
 const medias = computed(() => {
-  return Array.from({ length: 10 }, (_, i) => i).map((_, index) => ({
-    id: index,
-    url: useImageBlur(model.value.avatar, true)
+  return map(items.value, (item) => ({
+    id: item.id,
+    url: useImageBlur(item.url, true),
+    type: item.type
   }))
+})
+
+const lastId = computed(() => get(last(items.value), 'id', ''))
+const hasMore = computed(() => !isEmpty(mediasData.value?.items))
+const isLoading = computed(() => isAsyncLoading.value || isScrollLoading.value)
+
+async function loadMore() {
+  let loading
+
+  if (isEmpty(items.value)) {
+    loading = startLoader('medias')
+  }
+
+  try {
+    const response = await useApi(`/v1/model/${id}/medias`, {
+      body: {
+        type: activeTab.value === 'all' ? null : activeTab.value,
+        lastId: lastId.value
+      },
+      method: 'POST'
+    })
+
+    const oldItems = isArray(items.value) ? items.value : []
+    const newItems = isArray(response.items) ? response.items : []
+
+    items.value = uniqBy([...oldItems, ...newItems], 'id')
+  } catch {
+    items.value = []
+  } finally {
+    if (loading) loading.stop()
+  }
+}
+
+const el = computed(() => {
+  if (!isClient) return null
+  if (locked.value) return null
+  if (!isReady.value) return null
+  if (!isLogged.value) return null
+
+  return document
+})
+
+const { isLoading: isScrollLoading } = useInfiniteScroll(el, () => loadMore(), {
+  distance: 100,
+  canLoadMore: () => hasMore.value
+})
+
+watch(isLogged, () => {
+  items.value = []
+  loadMore()
 })
 
 if (!model.value.id) {
