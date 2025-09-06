@@ -1,14 +1,7 @@
 <template>
-  <Transition
-    enter-active-class="duration-300 transition-opacity"
-    leave-active-class="duration-300 transition-opacity"
-    enter-from-class="opacity-0"
-    leave-from-class="opacity-1"
-    enter-to-class="opacity-1"
-    leave-to-class="opacity-0"
-  >
+  <Transition enter-from-class=" opacity-0" leave-to-class=" opacity-0">
     <div
-      class="top-0 left-0 z-50 flex items-center justify-center"
+      class="top-0 left-0 z-50 flex items-center justify-center duration-300"
       :class="[fixed ? 'fixed h-dvh w-dvw' : 'absolute h-full w-full', background && 'bg-black/80']"
       v-if="active"
     >
@@ -32,34 +25,34 @@ withDefaults(
 </script>
 
 <style scoped>
+@keyframes loading-rotate {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}
+
 svg {
   animation: loading-rotate 2s linear infinite;
-
-  @keyframes loading-rotate {
-    100% {
-      transform: rotate(1turn);
-    }
-  }
 
   > circle {
     animation: loading-dash 1.5s ease-in-out infinite;
     stroke-width: 2;
     stroke: #dc2626;
-
-    @keyframes loading-dash {
-      0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-      }
-      50% {
-        stroke-dasharray: 90, 150;
-        stroke-dashoffset: -40px;
-      }
-      100% {
-        stroke-dasharray: 90, 150;
-        stroke-dashoffset: -120px;
-      }
-    }
   }
 }
 </style>

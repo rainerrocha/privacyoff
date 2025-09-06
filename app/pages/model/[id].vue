@@ -52,16 +52,16 @@
           <div class="relative ml-auto flex items-center">
             <button
               type="button"
-              class="flex h-10 w-10 items-center justify-center rounded-full duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
               :class="
-                locked
+                !isLogged
                   ? 'text-neutral-200'
                   : liked
                     ? 'text-red-500'
                     : 'text-neutral-200 hover:text-red-500'
               "
               @click="toggleLiked"
-              :disabled="locked"
+              :disabled="!isLogged"
             >
               <Transition
                 enter-active-class="transition-all duration-500"
@@ -90,7 +90,7 @@
                 : ['ring-2 ring-transparent hover:ring-neutral-600']
             "
             @click="changeTab('all')"
-            :disabled="locked"
+            :disabled="!isLogged"
           >
             Todos
           </button>
@@ -99,14 +99,14 @@
             type="button"
             class="flex h-10 max-w-48 items-center justify-center gap-2 rounded-full bg-neutral-800 bg-transparent px-3 font-medium duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-28 sm:px-6"
             :class="
-              locked
+              !isLogged
                 ? 'text-neutral-200'
                 : activeTab === 'photos'
                   ? ['text-red-600 ring-2 ring-red-600']
                   : ['ring-2 ring-transparent hover:ring-neutral-600']
             "
             @click="changeTab('photos')"
-            :disabled="locked"
+            :disabled="!isLogged"
           >
             Fotos
           </button>
@@ -115,14 +115,14 @@
             type="button"
             class="flex h-10 max-w-48 items-center justify-center gap-2 rounded-full bg-neutral-800 bg-transparent px-3 font-medium duration-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-28 sm:px-6"
             :class="
-              locked
+              !isLogged
                 ? 'text-neutral-200'
                 : activeTab === 'videos'
                   ? ['text-red-600 ring-2 ring-red-600']
                   : ['ring-2 ring-transparent hover:ring-neutral-600']
             "
             @click="changeTab('videos')"
-            :disabled="locked"
+            :disabled="!isLogged"
           >
             Vídeos
           </button>
@@ -132,11 +132,21 @@
           class="grid w-full flex-1 grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4"
           v-if="locked"
         >
-          <button type="button" v-for="photo in medias" :key="photo.id" @click="openModal('login')">
+          <button
+            type="button"
+            class="cursor-pointer duration-300 hover:opacity-50"
+            v-for="photo in medias"
+            :key="photo.id"
+            @click="isLogged ? openModal('subscription') : openModal('login')"
+          >
             <div
               class="relative flex aspect-square flex-1 items-center justify-center bg-neutral-500"
             >
-              <Icon name="Locked" class="h-10 w-10" />
+              <Image :src="photo.url" class="relative aspect-square flex-1" cover />
+
+              <div class="pointer-events-none absolute flex items-center justify-center">
+                <Icon name="Locked" class="h-10 w-10" />
+              </div>
             </div>
           </button>
         </div>
@@ -144,6 +154,7 @@
         <Gallery class="grid w-full flex-1 grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4" v-else>
           <button
             type="button"
+            class="cursor-pointer duration-300 hover:opacity-50"
             v-for="photo in medias"
             :key="photo.id"
             :href="photo.url"
@@ -158,13 +169,13 @@
 </template>
 
 <script lang="ts" setup>
-const { isLogged } = useUser()
+const { isLogged, hasActiveSubscription } = useUser()
 
 const { id } = useRoute().params
 const { data } = await useAsyncData('model', () => useApi(`/v1/model/${id}`))
 
 const liked = ref(false)
-const locked = computed(() => !isLogged.value)
+const locked = computed(() => !isLogged.value || !hasActiveSubscription.value)
 const activeTab = ref<'all' | 'photos' | 'videos'>('all')
 
 const changeTab = (tab: 'all' | 'photos' | 'videos') => {
@@ -193,7 +204,7 @@ const model = computed((): Record<string, any> => {
 const medias = computed(() => {
   return Array.from({ length: 10 }, (_, i) => i).map((_, index) => ({
     id: index,
-    url: model.value.avatar
+    url: useImageBlur(model.value.avatar, true)
   }))
 })
 
@@ -201,7 +212,7 @@ if (!model.value.id) {
   throw createError({ statusCode: 404 })
 }
 
-const title = computed(() => `${model.value.name} - Privacy Off`)
+const title = computed(() => `${model.value.name} | Privacy Off`)
 const description = computed(() => `Fotos e vídeos de ${model.value.name}`)
 
 useHead({

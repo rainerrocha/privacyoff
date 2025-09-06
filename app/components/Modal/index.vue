@@ -6,7 +6,7 @@
         class="fixed top-0 left-0 z-40 flex h-dvh w-full items-center-safe justify-center overflow-y-auto duration-300 select-none before:fixed before:h-[200%] before:w-[200%] before:bg-black/70 sm:py-6"
       >
         <OnClickOutside
-          class="scroll-thin max-h-content relative z-10 flex min-h-full w-dvw flex-1 flex-col border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:max-h-min sm:min-h-auto sm:rounded-lg sm:shadow-2xl"
+          class="scroll-thin max-h-content relative z-10 flex min-h-full flex-1 flex-col border border-neutral-100 bg-neutral-100 transition-transform duration-300 sm:max-h-min sm:min-h-auto sm:max-w-fit sm:rounded-lg sm:shadow-2xl"
           :class="additionalClasses"
           @trigger="handleClickOutside"
         >
@@ -18,19 +18,10 @@
             <Icon name="Close" class="h-5 w-5" />
           </button>
 
-          <slot name="content" :close="handleClose" :submit="handleSubmit" :loading="loading">
-            <h1 class="text-xl font-semibold">
-              <slot name="header" />
-            </h1>
-
-            <p class="mt-4 text-sm font-normal text-[#778490]">
-              <slot name="body" />
-            </p>
-
-            <div class="mt-10 flex justify-end gap-2">
-              <slot name="footer" :close="handleClose" :submit="handleSubmit" :loading="loading" />
-            </div>
-          </slot>
+          <ModalItemLogin v-if="active === 'login'" />
+          <ModalItemOver18 v-if="active === 'over18'" />
+          <ModalItemRegister v-if="active === 'register'" />
+          <ModalItemSubscription v-if="active === 'subscription'" />
         </OnClickOutside>
       </div>
     </Transition>
@@ -40,7 +31,6 @@
 <script lang="ts" setup>
 import { delay } from 'lodash-es'
 import { OnClickOutside } from '@vueuse/components'
-import { useElementBounding } from '@vueuse/core'
 
 const props = withDefaults(
   defineProps<{
@@ -50,59 +40,39 @@ const props = withDefaults(
     disableOutsideClick?: boolean
   }>(),
   {
-    class: 'w-[490px] p-10',
+    class: 'w-[490px]',
     submit: () => Promise.resolve(true),
     closeOnSuccess: true,
     disableOutsideClick: false
   }
 )
 
-const active = ref(false)
-const loading = ref(false)
+const active = ref<string | null>(null)
 const blinkClass = ref('')
 const additionalClasses = computed(() => [props.class, blinkClass.value])
 
-const handleOpen = () => {
-  active.value = true
-  document.body.style.overflow = 'hidden'
+const handleOpen = (id: string) => {
+  if (id) {
+    active.value = id
+    document.body.style.overflow = 'hidden'
+  }
 }
 
 const handleClose = () => {
-  active.value = false
+  active.value = null
   document.body.style.overflow = 'auto'
 }
 
-const handleSubmit = async () => {
-  if (!loading.value) {
-    try {
-      loading.value = true
-
-      const success = await props.submit?.()
-
-      if (success && props.closeOnSuccess) {
-        handleClose()
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      loading.value = false
-    }
-  }
-}
-
 const handleClickOutside = () => {
-  if (props.disableOutsideClick || loading.value) {
-    blinkClass.value = 'blink'
+  blinkClass.value = 'blink'
 
-    return delay(() => (blinkClass.value = ''), 100)
-  }
-
-  handleClose()
+  return delay(() => (blinkClass.value = ''), 100)
 }
 
-defineExpose({
-  open: handleOpen,
-  close: handleClose
+onMounted(() => {
+  const win = window as any
+  win.openModal = handleOpen
+  win.closeModal = handleClose
 })
 </script>
 

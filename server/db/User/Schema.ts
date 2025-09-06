@@ -8,25 +8,25 @@ export const UserSchema = z.object({
 
   subscription: z
     .object({
+      id: z.string().nullish(),
+      status: z.enum(['active', 'pending']).default('pending'),
       period: z
         .enum(['monthly', 'quarterly', 'semiannual', 'annual', 'lifetime'])
         .default('monthly'),
+      qrCode: z.string().nullish(),
       expiresAt: z
-        .instanceof(Timestamp)
-        .transform((ts) => ts.toDate())
-        .default(Timestamp.now().toDate())
+        .union([z.instanceof(Timestamp).transform((ts) => ts.toDate()), z.instanceof(Date)])
+        .default(new Date())
     })
     .nullish(),
 
   updatedAt: z
-    .instanceof(Timestamp)
-    .transform((ts) => ts.toDate())
-    .default(Timestamp.now().toDate()),
+    .union([z.instanceof(Timestamp).transform((ts) => ts.toDate()), z.instanceof(Date)])
+    .default(new Date()),
 
   createdAt: z
-    .instanceof(Timestamp)
-    .transform((ts) => ts.toDate())
-    .default(Timestamp.now().toDate())
+    .union([z.instanceof(Timestamp).transform((ts) => ts.toDate()), z.instanceof(Date)])
+    .default(new Date())
 })
 
 export type IUser = z.infer<typeof UserSchema>

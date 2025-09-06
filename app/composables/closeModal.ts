@@ -1,8 +1,8 @@
-export const openModal = async (modal: string) => {
+export const closeModal = async () => {
   try {
     const win = window as any
 
-    win.openModal(modal)
+    win.closeModal()
 
     return true
   } catch {

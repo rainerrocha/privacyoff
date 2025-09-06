@@ -49,10 +49,7 @@
     </main>
 
     <Loader :active="isLoading" fixed background />
-    <ModalItemLogin />
-    <ModalItemRegister />
-    <ModalItemOver18 />
-    <ModalItemSubscription />
+    <Modal />
 
     <div class="hidden sm:flex">
       <Toaster position="bottom-right" :expand="false" richColors />
@@ -70,4 +67,23 @@ import 'vue-sonner/style.css'
 
 const { isLogged } = useUser()
 const { isLoading } = useLoader()
+
+const cookie = useCookie('over18', {
+  path: '/',
+  secure: true,
+  expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+})
+
+const isOver18 = computed(() => {
+  if (isLogged.value) return true
+  else return cookie.value === 'yes'
+})
+
+watch(isOver18, (value) => {
+  if (!value) openModal('over18')
+})
+
+onMounted(() => {
+  if (!isOver18.value) openModal('over18')
+})
 </script>

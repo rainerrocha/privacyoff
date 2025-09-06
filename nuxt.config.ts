@@ -59,10 +59,6 @@ export default defineNuxtConfig({
           content: 'Privacy Off'
         },
         {
-          property: 'og:image',
-          content: 'https://privacyoff.com/og-image.jpg'
-        },
-        {
           property: 'og:title',
           content: 'Privacy Off'
         },

@@ -1,28 +1,69 @@
+import { generatePix } from '~~/server/services/xgate/generatePix'
+
 export default defineEventHandler(async (event) => {
   try {
-    const { plan } = await getRequestData(event)
+    const { period } = await getRequestData(event)
 
-    if (!plan) {
-      return getError(event, '400_PLAN_REQUIRED')
+    if (!period) {
+      return getError(event, '400_PERIOD_REQUIRED')
     }
 
-    if (!['monthly', 'quarterly', 'semiannual', 'annual', 'lifetime'].includes(plan)) {
-      return getError(event, '400_INVALID_PLAN')
+    if (!['monthly', 'quarterly', 'semiannual', 'annual', 'lifetime'].includes(period)) {
+      return getError(event, '400_INVALID_PERIOD')
     }
 
     const user = await getLogged(event)
 
-    if (!user) {
+    const { data } = user ?? {}
+    const { email, subscription } = data ?? {}
+
+    if (!user || !email) {
       return getError(event, '401_UNAUTHORIZED')
     }
 
-    if (user.data.subscription?.expiresAt && user.data.subscription.expiresAt > new Date()) {
+    if (
+      subscription?.status === 'active' &&
+      subscription.expiresAt &&
+      subscription.expiresAt > new Date()
+    ) {
       return getError(event, '400_SUBSCRIPTION_ALREADY_EXISTS')
     }
 
-    return getSuccess({
-      qrCode: `00020101021226800014br.gov.bcb.pix2558pix.delbank.com.br/v2/cob/vcharge1452bcce8b2f4b6cbace29c2a5204000053039865802BR5925PUSHINPAYSISTEMAS DE COB6007ARACAJU62070503***6304CF76`
+    let amount = 0
+    let expiresAt = new Date()
+
+    if (period === 'monthly') {
+      amount = 29.9
+      expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    } else if (period === 'quarterly') {
+      amount = 59.9
+      expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+    } else if (period === 'annual') {
+      amount = 119.9
+      expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+    }
+
+    if (!amount) {
+      return getError(event, '400_INVALID_PERIOD')
+    }
+
+    const { id, code: qrCode } = await generatePix(email, amount)
+
+    if (!id || !qrCode) {
+      return getError(event, '400_FAILED_TO_GENERATE_PIX')
+    }
+
+    await user.update({
+      subscription: {
+        id,
+        status: 'pending',
+        qrCode,
+        period,
+        expiresAt
+      }
     })
+
+    return getSuccess({ qrCode })
   } catch (error) {
     return getError(event, error)
   }

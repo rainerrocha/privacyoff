@@ -18,7 +18,7 @@ export class User extends FirestoreModel {
   }
 
   public get data() {
-    return this.docData
+    return UserSchema.parse(this.docData)
   }
 
   static async get(id: string) {
@@ -97,7 +97,12 @@ export class User extends FirestoreModel {
     return isEqual(password, this.data.password)
   }
 
+  async hasActiveSubscription() {
+    const { status, expiresAt } = this.data.subscription || {}
+    return status === 'active' && expiresAt && expiresAt > new Date()
+  }
+
   toJSON() {
-    return this.docData
+    return this.data
   }
 }

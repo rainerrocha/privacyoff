@@ -11,9 +11,13 @@ export default defineEventHandler(async (event) => {
     return getError(event, { status: 403, message: 'Forbidden' })
   }
 
-  const isLogged = Boolean(await getLogged(event))
+  const user = await getLogged(event)
 
-  if (!isLogged) {
+  if (!user) {
+    return getError(event, { status: 401, message: 'Unauthorized' })
+  }
+
+  if (!user.hasActiveSubscription()) {
     return getError(event, { status: 401, message: 'Unauthorized' })
   }
 

@@ -1,10 +1,13 @@
 export const useUser = () => {
   // Estado global do composable
   const ssid = useState('ssid', () => useCookie('__session'))
-  const data = useState<any>('user', () => ({}))
+  const data = useState<Record<string, any>>('user', () => ({}))
 
   // Getter para verificar se o usuário está  logado
   const isLogged = computed(() => Boolean(ssid.value && data.value?.id))
+
+  // Getter para verificar se o usuário tem uma assinatura ativa
+  const hasActiveSubscription = computed(() => data.value?.subscription?.status === 'active')
 
   // Função para pegar os dados do usuário
   const getData = async () => {
@@ -34,6 +37,7 @@ export const useUser = () => {
     data,
     getData,
     setData,
-    isLogged
+    isLogged,
+    hasActiveSubscription
   }
 }
