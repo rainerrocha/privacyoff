@@ -1,12 +1,12 @@
 import axios from 'axios'
 import { wrapper } from 'axios-cookiejar-support'
 import { CookieJar } from 'tough-cookie'
-import { uploadBuffer } from '../../services/firebase/storage'
+import { uploadBuffer } from '~~/server/services/firebase/storage'
 import { toLower } from 'lodash-es'
 import { createHash } from 'crypto'
 import { extension } from 'mime-types'
-import { Media } from '../../db/Media'
-import { Model } from '../../db/Model'
+import { Media } from '~~/server/db/Media'
+import { Model } from '~~/server/db/Model'
 
 const jar = new CookieJar()
 
@@ -154,12 +154,12 @@ const getModel = async (id: string, num: number, page = 1, tryAgain = false) => 
         })
 
         if (media) {
-          console.log(media.id, '-', 'OK')
+          console.info(media.id, '-', 'OK')
         } else {
-          console.log(contentFile, '-', 'ERROR')
+          console.info(contentFile, '-', 'ERROR')
         }
       } else {
-        console.log(contentFile, '-', 'ERROR')
+        console.info(contentFile, '-', 'ERROR')
       }
     }
 
@@ -191,6 +191,7 @@ export default defineEventHandler(async (event) => {
         const { id, num } = model.data || {}
 
         if (id && num) {
+          await login()
           const success = await getModel(id, num)
 
           return getSuccess({}, success)
