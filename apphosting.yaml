@@ -6,6 +6,7 @@ runConfig:
   # concurrency: 80
   cpu: 1
   memoryMiB: 1024
+  timeoutSeconds: 3600
 
 # Environment variables and secrets.
 # env:
@@ -24,5 +25,15 @@ runConfig:
 env:
   - variable: AES_SECRET
     secret: AES_SECRET
+    availability:
+      - RUNTIME
+
+  - variable: XGATE_USER
+    secret: XGATE_USER
+    availability:
+      - RUNTIME
+
+  - variable: XGATE_PASS
+    secret: XGATE_PASS
     availability:
       - RUNTIME

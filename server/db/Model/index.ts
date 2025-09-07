@@ -45,6 +45,27 @@ export class Model extends FirestoreModel {
     }
   }
 
+  static async getByNum(num: number) {
+    try {
+      const db = new Model()
+      const snapshot = await db.collection.where('num', '==', num).get()
+
+      if (snapshot.size > 0) {
+        const self = new Model(snapshot.docs[0].id)
+        self.docId = snapshot.docs[0].id
+        self.docData = ModelSchema.parse(snapshot.docs[0].data())
+
+        return self
+      }
+
+      return null
+    } catch (error) {
+      console.error(error)
+
+      return null
+    }
+  }
+
   static async list({
     limit,
     select,
