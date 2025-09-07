@@ -2,7 +2,9 @@ import { getId } from '~~/server/utils/getId'
 import { type IMedia, MediaSchema } from './Schema'
 export { type IMedia, MediaSchema } from './Schema'
 import { FirestoreModel } from '~~/server/services/firebase/firestoreModel'
-import { Timestamp } from 'firebase-admin/firestore'
+import { Query, Timestamp } from 'firebase-admin/firestore'
+import { clamp, map, toUpper } from 'lodash-es'
+import { zipObject } from 'lodash-es'
 
 export class Media extends FirestoreModel {
   private docId: string = getId()
@@ -39,6 +41,57 @@ export class Media extends FirestoreModel {
       console.error(error)
 
       return null
+    }
+  }
+
+  static async list({
+    limit,
+    select,
+    lastId,
+    modelId
+  }: { limit?: number; select?: string[]; lastId?: string; modelId?: string } = {}) {
+    try {
+      const db = new Media()
+
+      let query: Query = db.collection.where('modelId', '==', modelId).orderBy('createdAt', 'desc')
+
+      if (limit) {
+        query = query.limit(clamp(limit, 1, 100))
+      } else {
+        query = query.limit(21)
+      }
+
+      if (select) {
+        query = query.select(...select)
+      }
+
+      if (lastId) {
+        const lastDoc = await db.getDoc(toUpper(lastId)).get()
+
+        if (lastDoc.exists) {
+          query = query.startAfter(lastDoc)
+        }
+      }
+
+      const snapshot = await query.get()
+
+      if (snapshot.size > 0) {
+        return map(snapshot.docs, (doc) => {
+          if (select) {
+            const pick = zipObject(select, Array(select.length).fill(true))
+
+            return MediaSchema.pick(pick).parse(doc.data())
+          } else {
+            return MediaSchema.parse(doc.data())
+          }
+        })
+      }
+
+      return []
+    } catch (error) {
+      console.error(error)
+
+      return []
     }
   }
 

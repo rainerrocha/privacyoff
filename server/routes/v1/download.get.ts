@@ -113,7 +113,7 @@ const downloadFile = async (url: string) => {
   }
 }
 
-const getModel = async (id: string, num: number, page = 1, tryAgain = false) => {
+const getMedia = async (id: string, num: number, page = 1, tryAgain = false) => {
   try {
     const response = await site.get(`/model/${num}?page=${page}`)
 
@@ -121,12 +121,12 @@ const getModel = async (id: string, num: number, page = 1, tryAgain = false) => 
       if (tryAgain) {
         console.error('Login failed')
 
-        return false
+        return { hasNextPage: false }
       }
 
       await login()
 
-      return getModel(id, num, page, true)
+      return getMedia(id, num, page, true)
     }
 
     const html = response.data
@@ -169,22 +169,22 @@ const getModel = async (id: string, num: number, page = 1, tryAgain = false) => 
       )
 
     if (hasNextPage) {
-      return getModel(id, num, page + 1, tryAgain)
+      return { hasNextPage: true }
     }
 
-    return true
+    return { hasNextPage: false }
   } catch (error) {
     console.error(error)
 
-    return false
+    return { hasNextPage: false }
   }
 }
 
 export default defineEventHandler(async (event) => {
   try {
-    const { num } = getQuery(event)
+    const { num, page = 1 } = getQuery(event)
 
-    if (num) {
+    if (num && page) {
       const model = await Model.getByNum(Number(num))
 
       if (model && model.data) {
@@ -192,14 +192,14 @@ export default defineEventHandler(async (event) => {
 
         if (id && num) {
           await login()
-          const success = await getModel(id, num)
+          const success = await getMedia(id, num, Number(page))
 
-          return getSuccess({}, success)
+          return getSuccess(success)
         }
       }
     }
 
-    return getSuccess({}, false)
+    return getSuccess({ hasNextPage: false })
   } catch (error) {
     return getError(event, error)
   }

@@ -1,9 +1,10 @@
 import { map, toLower } from 'lodash-es'
-import { Model } from '~~/server/db/Model'
+import { Media } from '~~/server/db/Media'
 
 export default defineEventHandler(async (event) => {
   let items: any[] = []
 
+  const modelId = getRouterParam(event, 'id')
   const isLogged = Boolean(await getLogged(event))
 
   if (isLogged) {
@@ -17,17 +18,18 @@ export default defineEventHandler(async (event) => {
       lastId: string
     }
 
-    const data = await Model.list({
+    const data = await Media.list({
       limit: Number(limit),
-      select: ['id', 'name', 'avatar'],
-      lastId
+      select: ['id', 'type', 'content', 'preview'],
+      lastId,
+      modelId
     })
 
     items = map(data, async (model) => ({
       ...model,
       id: toLower(model.id),
-      url: `/files/${model.avatar}`,
-      type: 'photo'
+      url: `/files/${model.content}`,
+      type: model.type
     }))
   }
 
