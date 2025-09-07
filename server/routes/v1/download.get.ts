@@ -191,9 +191,9 @@ export default defineEventHandler(async (event) => {
         const { id, num } = model.data || {}
 
         if (id && num) {
-          await getModel(id, num)
+          const success = await getModel(id, num)
 
-          return getSuccess({}, true)
+          return getSuccess({}, success)
         }
       }
     }
