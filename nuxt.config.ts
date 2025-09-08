@@ -92,7 +92,7 @@ export default defineNuxtConfig({
           async: true
         },
         {
-          innerHTML: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-RGCXEPC0J6');`
+          innerHTML: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RGCXEPC0J6');`
         }
       ]
     }
