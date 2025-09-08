@@ -45,15 +45,26 @@ export class Media extends FirestoreModel {
   }
 
   static async list({
+    type,
     limit,
     select,
     lastId,
     modelId
-  }: { limit?: number; select?: string[]; lastId?: string; modelId?: string } = {}) {
+  }: {
+    type?: 'photo' | 'video'
+    limit?: number
+    select?: string[]
+    lastId?: string
+    modelId?: string
+  } = {}) {
     try {
       const db = new Media()
 
-      let query: Query = db.collection.where('modelId', '==', modelId).orderBy('createdAt', 'desc')
+      let query: Query = db.collection.orderBy('createdAt', 'desc').where('modelId', '==', modelId)
+
+      if (type) {
+        query = query.where('type', '==', type)
+      }
 
       if (limit) {
         query = query.limit(clamp(limit, 1, 100))

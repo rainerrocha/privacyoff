@@ -142,7 +142,7 @@
             <div
               class="relative flex aspect-square flex-1 items-center justify-center bg-neutral-500"
             >
-              <Image :src="photo.url" class="relative aspect-square flex-1" cover />
+              <Image :src="photo.preview" class="relative aspect-square flex-1" cover />
 
               <div class="pointer-events-none absolute flex items-center justify-center">
                 <Icon name="Locked" class="h-10 w-10" />
@@ -157,10 +157,10 @@
             class="cursor-pointer duration-300 hover:opacity-50"
             v-for="photo in medias"
             :key="photo.id"
-            :href="photo.url"
+            :href="photo.content"
             :data-fancybox="id"
           >
-            <Image :src="photo.url" class="relative aspect-square flex-1" cover />
+            <Image :src="photo.preview" class="relative aspect-square flex-1" cover />
           </button>
         </Gallery>
 
@@ -239,8 +239,9 @@ const model = computed((): Record<string, any> => {
 const medias = computed(() => {
   return map(items.value, (item) => ({
     id: item.id,
-    url: useImageBlur(item.url, true),
-    type: item.type
+    type: item.type,
+    preview: useImageBlur(item.preview, true),
+    content: useImageBlur(item.content, true)
   }))
 })
 

@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const data = await Media.list({
+      type,
       limit: Number(limit),
       select: ['id', 'type', 'content', 'preview'],
       lastId,
@@ -28,8 +29,9 @@ export default defineEventHandler(async (event) => {
     items = map(data, async (model) => ({
       ...model,
       id: toLower(model.id),
-      url: `/files/${model.content}`,
-      type: model.type
+      type: model.type,
+      preview: `/files/${model.preview}`,
+      content: `/files/${model.content}`
     }))
   }
 
