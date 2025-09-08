@@ -1,10 +1,10 @@
-import { map, toLower } from 'lodash-es'
+import { map, toLower, toUpper } from 'lodash-es'
 import { Media } from '~~/server/db/Media'
 
 export default defineEventHandler(async (event) => {
   let items: any[] = []
 
-  const modelId = getRouterParam(event, 'id')
+  const modelId = toUpper(getRouterParam(event, 'id'))
   const isLogged = Boolean(await getLogged(event))
 
   if (isLogged) {
