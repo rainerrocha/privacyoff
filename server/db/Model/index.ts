@@ -74,17 +74,20 @@ export class Model extends FirestoreModel {
   static async list({
     limit,
     select,
+    search,
     lastId
-  }: { limit?: number; select?: string[]; lastId?: string } = {}) {
+  }: { limit?: number; select?: string[]; search?: string; lastId?: string } = {}) {
     try {
       const db = new Model()
 
       let query: Query = db.collection.orderBy('num', 'desc')
 
-      if (limit) {
-        query = query.limit(clamp(limit, 1, 100))
-      } else {
-        query = query.limit(21)
+      if (!search) {
+        if (limit) {
+          query = query.limit(clamp(limit, 1, 100))
+        } else {
+          query = query.limit(21)
+        }
       }
 
       if (select) {

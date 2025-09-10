@@ -1,18 +1,15 @@
 <template>
-  <div class="min-h-dvh bg-black font-sans text-white select-none">
+  <div class="min-h-dvh w-full bg-black font-sans text-white select-none">
     <header class="flex h-16 w-full">
       <div
         class="fixed z-20 flex h-16 w-full items-center justify-between border-b border-neutral-800 bg-black"
       >
-        <div class="mx-auto flex w-full sm:max-w-4xl items-center gap-6 px-6 py-3">
-          <NuxtLink
-            to="/"
-            class="flex items-center justify-center text-2xl font-bold text-white sm:text-3xl"
-          >
-            <Icon name="Logo" class="h-8 w-auto md:h-10" />
+        <div class="mx-auto flex w-full items-center justify-between gap-6 px-6 py-3 sm:max-w-4xl">
+          <NuxtLink to="/" class="w-fit min-w-fit text-white">
+            <Icon name="Logo" class="h-8 w-auto duration-300 sm:h-10" />
           </NuxtLink>
 
-          <div class="ml-auto flex gap-1 sm:gap-6">
+          <div class="flex gap-1 sm:gap-6">
             <button
               type="button"
               @click="openModal('subscription')"

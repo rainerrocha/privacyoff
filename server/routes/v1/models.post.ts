@@ -1,5 +1,10 @@
-import { map, toLower } from 'lodash-es'
+import { map, take, toLower } from 'lodash-es'
 import { Model } from '~~/server/db/Model'
+import { useSearch } from '~~/server/utils/search'
+
+const removeAccents = (entry: string) => {
+  return entry.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
 
 export default defineEventHandler(async (event) => {
   let items: any[] = []
@@ -7,16 +12,32 @@ export default defineEventHandler(async (event) => {
   const isLogged = Boolean(await getLogged(event))
 
   if (isLogged) {
-    const { limit = 21, lastId } = (await getRequestData(event)) as {
+    const {
+      limit = 21,
+      search,
+      lastId
+    } = (await getRequestData(event)) as {
       limit: number
+      search: string
       lastId: string
     }
 
-    const data = await Model.list({
+    let data = await Model.list({
       limit: Number(limit),
       select: ['id', 'name', 'avatar', 'cover'],
+      search,
       lastId
     })
+
+    if (search) {
+      data = useSearch(
+        map(data, (item) => ({ ...item, search: removeAccents(item.name) })),
+        removeAccents(search),
+        { fields: ['search'] }
+      )
+
+      data = take(data, Number(limit))
+    }
 
     items = map(data, async (model) => ({
       ...model,
