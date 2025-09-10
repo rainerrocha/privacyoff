@@ -4,7 +4,9 @@
       <div
         class="fixed z-20 flex h-16 w-full items-center justify-between border-b border-neutral-800 bg-black"
       >
-        <div class="mx-auto flex w-full items-center justify-between gap-6 px-6 py-3 sm:max-w-4xl">
+        <div
+          class="mx-auto flex w-full items-center justify-between px-6 py-3 sm:max-w-4xl sm:gap-6"
+        >
           <NuxtLink to="/" class="w-fit min-w-fit text-white">
             <Icon name="Logo" class="h-8 w-auto duration-300 sm:h-10" />
           </NuxtLink>
@@ -13,7 +15,7 @@
             <button
               type="button"
               @click="openModal('subscription')"
-              class="flex items-center justify-center gap-2 px-2 text-base font-medium text-neutral-300 duration-300 hover:text-red-500 sm:text-lg"
+              class="flex items-center justify-center gap-2 px-2 text-base font-medium whitespace-nowrap text-neutral-300 duration-300 hover:text-red-500 sm:text-lg"
               v-if="isLogged"
             >
               Assinatura
@@ -22,7 +24,7 @@
             <button
               type="button"
               @click="useLogout()"
-              class="flex items-center justify-center gap-2 px-2 text-base font-medium text-neutral-300 duration-300 hover:text-red-500 sm:text-lg"
+              class="flex items-center justify-center gap-2 px-2 text-base font-medium whitespace-nowrap text-neutral-300 duration-300 hover:text-red-500 sm:text-lg"
               v-if="isLogged"
             >
               Sair
@@ -31,7 +33,7 @@
             <button
               type="button"
               @click="openModal('login')"
-              class="flex items-center justify-center gap-2 px-2 text-base font-medium text-neutral-300 duration-300 hover:text-red-500 sm:text-lg"
+              class="flex items-center justify-center gap-2 px-2 text-base font-medium whitespace-nowrap text-neutral-300 duration-300 hover:text-red-500 sm:text-lg"
               v-else
             >
               Fazer login
