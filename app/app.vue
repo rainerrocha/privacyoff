@@ -4,7 +4,7 @@
       <div
         class="fixed z-20 flex h-16 w-full items-center justify-between border-b border-neutral-800 bg-black"
       >
-        <div class="mx-auto flex w-full max-w-4xl items-center gap-6 px-6 py-3">
+        <div class="mx-auto flex w-full sm:max-w-4xl items-center gap-6 px-6 py-3">
           <NuxtLink
             to="/"
             class="flex items-center justify-center text-2xl font-bold text-white sm:text-3xl"

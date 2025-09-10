@@ -1,5 +1,5 @@
 <template>
-  <section class="mx-auto flex max-w-4xl flex-col gap-6 px-4 text-gray-300 sm:px-6">
+  <section class="mx-auto flex flex-col gap-6 px-4 text-gray-300 sm:max-w-4xl sm:px-6">
     <div class="mt-2 flex h-12 w-full items-center justify-between whitespace-nowrap">
       <button
         type="button"
@@ -201,7 +201,7 @@ const { id } = useRoute().params
 const { data: modelData } = await useAsyncData(() => useApi(`/v1/model/${id}`))
 
 const { data: mediasData } = await useAsyncData(() =>
-  useApi(`/v1/model/${id}/medias`, { method: 'POST' })
+  useApi(`/v1/model/${modelData.value?.data?.id}/medias`, { method: 'POST' })
 )
 
 const { start: startLoader, isLoading: isAsyncLoading } = useLoader()
@@ -259,7 +259,7 @@ async function loadMore() {
   }
 
   try {
-    const response = await useApi(`/v1/model/${id}/medias`, {
+    const response = await useApi(`/v1/model/${modelData.value?.data?.id}/medias`, {
       body: {
         type: activeTab.value === 'all' ? null : activeTab.value,
         lastId: lastId.value

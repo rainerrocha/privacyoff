@@ -26,8 +26,13 @@ export class Model extends FirestoreModel {
 
   static async get(entry: string) {
     try {
+      if (Number.isFinite(Number(entry))) {
+        return Model.getByNum(Number(entry))
+      }
+
       const id = toUpper(entry)
       const self = new Model(id)
+
       const data = await self.getDoc(id).get()
 
       if (data.exists) {

@@ -1,5 +1,5 @@
 <template>
-  <section class="mx-auto flex max-w-4xl flex-col gap-6 px-4 text-gray-300 sm:px-6">
+  <section class="mx-auto flex sm:max-w-4xl flex-col gap-6 px-4 text-gray-300 sm:px-6">
     <div class="flex gap-2" v-if="isLogged">
       <form
         @submit.prevent="onSearch"
