@@ -182,7 +182,8 @@
           </div>
 
           <div v-else class="flex h-12 items-center justify-center">
-            <span class="text-lg text-neutral-600">Não há mais resultados</span>
+            <span class="text-lg text-neutral-600" v-if="hasItems">Não há mais resultados</span>
+            <span class="text-lg text-neutral-600" v-else>Nenhum resultado encontrado</span>
           </div>
         </div>
       </div>
@@ -197,11 +198,11 @@ import { get, isArray, isEmpty, last, map, uniqBy } from 'lodash-es'
 const { isLogged, hasActiveSubscription } = useUser()
 
 const { id } = useRoute().params
-const { data: modelData } = await useAsyncData('model', () => useApi(`/v1/model/${id}`))
+const { data: modelData } = await useAsyncData(() => useApi(`/v1/model/${id}`))
 
-const { data: mediasData } = await useAsyncData('medias', () => {
-  return useApi(`/v1/model/${id}/medias`, { method: 'POST' })
-})
+const { data: mediasData } = await useAsyncData(() =>
+  useApi(`/v1/model/${id}/medias`, { method: 'POST' })
+)
 
 const { start: startLoader, isLoading: isAsyncLoading } = useLoader()
 
@@ -209,6 +210,8 @@ const liked = ref(false)
 const items = ref<any[]>(mediasData.value?.items || [])
 const locked = computed(() => !isLogged.value || !hasActiveSubscription.value)
 const isReady = ref<boolean>(true)
+const hasMore = ref(!isEmpty(mediasData.value?.items))
+const hasItems = computed(() => !isEmpty(items.value))
 const activeTab = ref<'all' | 'photo' | 'video'>('all')
 
 const changeTab = (tab: 'all' | 'photo' | 'video') => {
@@ -246,7 +249,6 @@ const medias = computed(() => {
 })
 
 const lastId = computed(() => get(last(items.value), 'id', ''))
-const hasMore = computed(() => !isEmpty(mediasData.value?.items))
 const isLoading = computed(() => isAsyncLoading.value || isScrollLoading.value)
 
 async function loadMore() {
@@ -267,6 +269,12 @@ async function loadMore() {
 
     const oldItems = isArray(items.value) ? items.value : []
     const newItems = isArray(response.items) ? response.items : []
+
+    if (isEmpty(newItems)) {
+      hasMore.value = false
+    } else {
+      hasMore.value = true
+    }
 
     items.value = uniqBy([...oldItems, ...newItems], 'id')
   } catch {

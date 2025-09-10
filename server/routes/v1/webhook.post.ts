@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   try {
     const { id } = await getRequestData(event)
     const { currency, customer, updatedDate } = await getDeposit(id)
-    const { email } = await getCustomer(customer.externalId)
+    const { email } = await getCustomer(customer?.externalId)
     const { status, amount } = currency || {}
 
     if (email && status === 'PAID') {

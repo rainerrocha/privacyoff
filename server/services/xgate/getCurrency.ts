@@ -15,11 +15,13 @@ export const getCurrency = async () => {
     })
 
     if (!response.ok) {
-      return null
+      return {}
     }
 
     return (await response.json()).find((currency: Record<string, any>) => currency.type === 'PIX')
   } catch (error) {
-    return null
+    console.error(error)
+
+    return {}
   }
 }

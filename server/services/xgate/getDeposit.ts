@@ -3,6 +3,10 @@ import { getToken } from './getToken'
 
 export const getDeposit = async (id: string) => {
   try {
+    if (!id) {
+      return {}
+    }
+
     const token = await getToken()
 
     const response = await fetch(`https://api.xgateglobal.com/deposit/${id}`, {
@@ -14,11 +18,13 @@ export const getDeposit = async (id: string) => {
     })
 
     if (!response.ok) {
-      return null
+      return {}
     }
 
     return await response.json()
   } catch (error) {
-    return null
+    console.error(error)
+
+    return {}
   }
 }

@@ -62,7 +62,7 @@
         <NuxtLink
           v-for="item in models"
           :key="item.id"
-          :to="`/model/${item.id}`"
+          :to="`/${item.id}`"
           class="group relative flex flex-col items-center justify-center overflow-hidden rounded-lg bg-neutral-800 ring-2 ring-transparent transition-all duration-300 hover:scale-105 hover:ring-red-600"
         >
           <Image :src="item.cover" class="relative h-28 w-full overflow-hidden opacity-30" cover />
@@ -153,13 +153,12 @@ import { get, isArray, isEmpty, last, map, uniqBy } from 'lodash-es'
 const { isLogged } = useUser()
 const { start: startLoader, isLoading: isAsyncLoading } = useLoader()
 
-const { data } = await useAsyncData('models', () => {
-  return useApi('/v1/models', { method: 'POST' })
-})
+const { data } = await useAsyncData(() => useApi('/v1/models', { method: 'POST' }))
 
 const items = ref<any[]>(data.value?.items || [])
 const search = ref<string>('')
 const isReady = ref<boolean>(true)
+const hasMore = ref(!isEmpty(data.value?.items))
 
 const models = computed(() => {
   return map(items.value, (item) => ({
@@ -170,7 +169,6 @@ const models = computed(() => {
 })
 
 const lastId = computed(() => get(last(items.value), 'id', ''))
-const hasMore = computed(() => !isEmpty(data.value?.items))
 const isLoading = computed(() => isAsyncLoading.value || isScrollLoading.value)
 
 const onSearch = () => {
@@ -196,6 +194,12 @@ async function loadMore() {
 
     const oldItems = isArray(items.value) ? items.value : []
     const newItems = isArray(response.items) ? response.items : []
+
+    if (isEmpty(newItems)) {
+      hasMore.value = false
+    } else {
+      hasMore.value = true
+    }
 
     items.value = uniqBy([...oldItems, ...newItems], 'id')
   } catch {

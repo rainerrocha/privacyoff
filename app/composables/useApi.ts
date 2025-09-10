@@ -31,7 +31,7 @@ export const useApi = async (
     const { error, success, ...data } = response as Record<string, any>
 
     if (success) {
-      return { ...data, success: true }
+      return { ...data, success }
     }
 
     return { error: error?.message || 'INTERNAL_ERROR' }

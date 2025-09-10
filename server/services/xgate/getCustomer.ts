@@ -3,6 +3,10 @@ import { getToken } from './getToken'
 
 export const getCustomer = async (id: string) => {
   try {
+    if (!id) {
+      return {}
+    }
+
     const token = await getToken()
 
     const response = await fetch(`https://api.xgateglobal.com/customer/${id}`, {
@@ -14,11 +18,13 @@ export const getCustomer = async (id: string) => {
     })
 
     if (!response.ok) {
-      return null
+      return {}
     }
 
     return await response.json()
   } catch (error) {
-    return null
+    console.error(error)
+
+    return {}
   }
 }

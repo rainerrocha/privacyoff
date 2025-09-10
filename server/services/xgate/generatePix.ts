@@ -5,6 +5,10 @@ import { getCurrency } from './getCurrency'
 
 const deposit = async (email: string, amount: number) => {
   try {
+    if (!email || !amount) {
+      return {}
+    }
+
     const token = await getToken()
     const currency = await getCurrency()
 
@@ -26,12 +30,14 @@ const deposit = async (email: string, amount: number) => {
     })
 
     if (!response.ok) {
-      return null
+      return {}
     }
 
     return (await response.json())?.data
   } catch (error) {
-    return null
+    console.error(error)
+
+    return {}
   }
 }
 
@@ -41,6 +47,6 @@ export const generatePix = async (email: string, amount: number) => {
   } catch (error) {
     console.error(error)
 
-    return null
+    return {}
   }
 }

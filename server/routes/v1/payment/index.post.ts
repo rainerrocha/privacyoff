@@ -30,16 +30,20 @@ export default defineEventHandler(async (event) => {
     }
 
     let amount = 0
+    let description = ''
     let expiresAt = new Date()
 
     if (period === 'monthly') {
       amount = 29.9
+      description = 'Acesso mensal'
       expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     } else if (period === 'quarterly') {
       amount = 59.9
+      description = 'Acesso trimestral'
       expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
     } else if (period === 'annual') {
       amount = 119.9
+      description = 'Acesso anual'
       expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
     }
 
