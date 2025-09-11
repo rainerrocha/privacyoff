@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   pages: true,
+  sourcemap: false,
 
   devtools: {
     enabled: true
@@ -14,7 +15,14 @@ export default defineNuxtConfig({
   css: ['~/assets/css/tailwind.css'],
 
   vite: {
+    build: {
+      sourcemap: false
+    },
     plugins: [tailwindcss()]
+  },
+
+  nitro: {
+    sourceMap: false
   },
 
   app: {
