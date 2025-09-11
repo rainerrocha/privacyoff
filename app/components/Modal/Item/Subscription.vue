@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full w-screen px-6 py-6 sm:max-w-[600px] sm:px-10 sm:pt-10 sm:pb-10">
+  <div class="w-screen px-6 py-6 sm:max-w-[600px] sm:px-10 sm:pt-10 sm:pb-10">
     <div class="flex flex-col items-center justify-center" v-if="subscription.status === 'active'">
       <h1 class="text-3xl font-medium">Minha assinatura</h1>
 
@@ -188,12 +188,10 @@ const qrCode = ref('')
 const qrTextarea = ref<HTMLTextAreaElement | undefined>(undefined)
 const errorMessage = ref('')
 
-const { data: userData } = useUser()
+const { data: userData, getData } = useUser()
 const { start, isLoading } = useLoader()
 
-const subscription = computed(() => {
-  return userData.value?.subscription || {}
-})
+const subscription = computed(() => userData.value?.subscription || {})
 
 const onSubmit = async () => {
   const loading = start('auth')
@@ -271,4 +269,33 @@ const formatDate = (date: string) => {
     year: 'numeric'
   })
 }
+
+const isReady = ref(false)
+const oldData = ref<Record<string, any> | null>(userData.value)
+
+const checkPaymentStatus = async () => {
+  const oldStatus = oldData.value?.subscription?.status || ''
+
+  if (oldStatus === 'pending' && isReady.value) {
+    const newData = await getData(false)
+    const newStatus = newData.subscription?.status || ''
+
+    if (newStatus === 'active' && oldStatus !== newStatus) {
+      useToast('success', 'Assinatura ativa com sucesso!')
+    }
+
+    oldData.value = newData
+
+    setTimeout(() => checkPaymentStatus(), 2000)
+  }
+}
+
+onMounted(() => {
+  isReady.value = true
+  checkPaymentStatus()
+})
+
+onUnmounted(() => {
+  isReady.value = false
+})
 </script>

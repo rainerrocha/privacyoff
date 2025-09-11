@@ -36,11 +36,12 @@ export default defineEventHandler(async (event) => {
 
       if (user) {
         await user.update({
-          'subscription.id': id,
-          'subscription.status': 'active',
-          'subscription.period': period,
-          'subscription.qrCode': null,
-          'subscription.expiresAt': expiresAt
+          subscription: {
+            id,
+            status: 'active',
+            period,
+            expiresAt
+          }
         })
 
         await sendNotify(amount)

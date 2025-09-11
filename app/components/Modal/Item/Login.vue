@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full w-screen px-6 py-6 sm:max-w-[500px] sm:px-10 sm:pt-10 sm:pb-10">
+  <div class="w-screen px-6 py-6 sm:max-w-[500px] sm:px-10 sm:pt-10 sm:pb-10">
     <Form id="login" class="flex flex-col items-center justify-center" @submit="onSubmit">
       <h1 class="text-3xl font-medium">Fazer login</h1>
 

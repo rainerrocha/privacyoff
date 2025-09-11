@@ -10,8 +10,8 @@ export const useUser = () => {
   const hasActiveSubscription = computed(() => data.value?.subscription?.status === 'active')
 
   // Função para pegar os dados do usuário
-  const getData = async () => {
-    const loader = useLoader().start('user')
+  const getData = async (withLoader = true) => {
+    const loader = withLoader ? useLoader().start('user') : null
 
     try {
       const { data } = await useApi('/v1/user')
@@ -20,7 +20,7 @@ export const useUser = () => {
     } catch {
       return setData()
     } finally {
-      loader.stop()
+      loader?.stop()
     }
   }
 
