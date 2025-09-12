@@ -320,4 +320,10 @@ useHead({
     { property: 'og:description', content: description.value }
   ]
 })
+
+onMounted(() => {
+  if (locked.value) {
+    openModal('subscription')
+  }
+})
 </script>
