@@ -183,7 +183,7 @@
 </template>
 
 <script lang="ts" setup>
-const period = ref(isDev() ? 'monthly' : '')
+const period = ref('monthly')
 const qrCode = ref('')
 const qrTextarea = ref<HTMLTextAreaElement | undefined>(undefined)
 const errorMessage = ref('')
