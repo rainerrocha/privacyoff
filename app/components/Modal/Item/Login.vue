@@ -75,8 +75,8 @@
 </template>
 
 <script lang="ts" setup>
-const email = ref(isDev() ? 'rainer.rocha@icloud.com' : '')
-const password = ref(isDev() ? 'rr051195' : '')
+const email = ref('')
+const password = ref('')
 
 const emailRef = ref()
 const passwordRef = ref()
